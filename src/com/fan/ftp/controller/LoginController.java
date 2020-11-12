@@ -39,6 +39,7 @@ public class LoginController {
         this.loginData[3] = this.passwordText.getText();
 //        FtpClient.backEnd(this.loginData, this.main);
         Ftp_by_me_active ftp = new Ftp_by_me_active(loginData[0],loginData[2],loginData[3]);
+        main.setFtp(ftp);
         if (Ftp_by_me_active.isLogined){
             Platform.runLater(new Runnable() {
                 @Override public void run() {

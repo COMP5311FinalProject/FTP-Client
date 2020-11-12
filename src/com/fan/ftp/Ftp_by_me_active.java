@@ -125,9 +125,6 @@ public class Ftp_by_me_active {
             if (!infos[i].equals(""))
                 vinfos.add(infos[i]);
         }
-        for (int i = 0;i < vinfos.size();i++){
-            System.out.println(vinfos.get(i));
-        }
         // in case there are some space in the original file name
         String name = "";
         for (int i = 7;i < vinfos.size();i++){

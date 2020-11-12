@@ -2,12 +2,19 @@ package com.fan.ftp.controller;
 
 import com.fan.ftp.Main;
 import com.fan.ftp.model.FileModel;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import javafx.util.Callback;
 import org.apache.commons.net.ftp.FTPFile;
 
 import java.io.File;
@@ -30,6 +37,8 @@ public class ClientController {
     private  TableColumn<FileModel, String> size;
     @FXML
     private  TableColumn<FileModel, String> date;
+    @FXML
+    private TableColumn<FileModel, Void> action;
 
 
 //    public void showAllFileInfo(FTPFile[] ftpFiles){
@@ -46,13 +55,15 @@ public class ClientController {
     public void init(FileModel[] files) {
         for (FileModel file: files){
             fileModels.add(file);
-//            fileModels.add(new FileModel(file.getName(),file.getSize(),simpleDateFormat.format(file.getTimestamp().getTime())));
-//            System.out.println(file.getTimestamp());
         }
         name.setCellValueFactory(new PropertyValueFactory<FileModel,String>("name"));
         size.setCellValueFactory(new PropertyValueFactory<FileModel,String>("size"));
         date.setCellValueFactory(new PropertyValueFactory<FileModel,String>("date"));
+        action.setSortable(false);
+        addButtonToTable();
+
         table.setItems(fileModels);
+        // rewrite size column sort policy
         size.setComparator(new Comparator<String>() {
             @Override
             public int compare(String o1, String o2) {
@@ -79,5 +90,48 @@ public class ClientController {
 
     public void setMain(Main main) {
         this.main = main;
+    }
+
+    private void addButtonToTable() {
+
+        Callback<TableColumn<FileModel, Void>, TableCell<FileModel, Void>> cellFactory = new Callback<TableColumn<FileModel, Void>, TableCell<FileModel, Void>>() {
+            @Override
+            public TableCell<FileModel, Void> call(final TableColumn<FileModel, Void> param) {
+                final TableCell<FileModel, Void> cell = new TableCell<FileModel, Void>() {
+
+                    private final Button btn = new Button("download");
+
+                    {
+                        btn.setOnAction((ActionEvent event) -> {
+                            DirectoryChooser file=new DirectoryChooser();
+                            file.setTitle("Choose the local dirctionary for FTP");
+                            File newFolder = file.showDialog(main.getWindow());
+                            FileModel data = getTableView().getItems().get(getIndex());
+                            System.out.println("selectedData: " + data.getName());
+                            try {
+                                main.getFtp().download(data.getName(),newFolder.getPath());
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void updateItem(Void item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty) {
+                            setGraphic(null);
+                        } else {
+                            setGraphic(btn);
+                            setAlignment(Pos.CENTER);
+                        }
+                    }
+                };
+                return cell;
+            }
+        };
+
+        action.setCellFactory(cellFactory);
+
     }
 }
