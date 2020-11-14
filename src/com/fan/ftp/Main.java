@@ -7,6 +7,8 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -24,6 +26,8 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         window = primaryStage;
         showLoginView();
+        primaryStage.getIcons().add(new Image(Main.class.getResourceAsStream("ftp.png")));
+//        showClientView(files);
     }
     public void showLoginView() throws IOException {
         FXMLLoader loader = new FXMLLoader();
@@ -42,9 +46,6 @@ public class Main extends Application {
         Parent root = loader.load();
         ClientController controller = loader.getController();
         controller.setMain(this);
-//        for (FTPFile file: files){
-//            System.out.println(file.getName());
-//        }
         controller.init(files);
         window.setTitle("FTP Client");
         window.setScene(new Scene(root,800,700));

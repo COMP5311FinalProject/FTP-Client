@@ -23,6 +23,7 @@ import java.security.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class ClientController {
@@ -104,12 +105,17 @@ public class ClientController {
                     {
                         btn.setOnAction((ActionEvent event) -> {
                             DirectoryChooser file=new DirectoryChooser();
-                            file.setTitle("Choose the local dirctionary for FTP");
+                            file.setTitle("Choose the local directory for FTP");
                             File newFolder = file.showDialog(main.getWindow());
                             FileModel data = getTableView().getItems().get(getIndex());
                             System.out.println("selectedData: " + data.getName());
                             try {
                                 main.getFtp().download(data.getName(),newFolder.getPath());
+                                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                                alert.setTitle("FTP Client");
+                                alert.setHeaderText("Down Successfully!");
+                                alert.initOwner(main.getWindow());
+                                alert.showAndWait();
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -130,8 +136,20 @@ public class ClientController {
                 return cell;
             }
         };
-
         action.setCellFactory(cellFactory);
+    }
 
+    public void logout() {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirmation Dialog");
+        alert.setHeaderText("Are you sure to logout");
+        // modify the icon of this alert
+        alert.initOwner(main.getWindow());
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ButtonType.OK){
+            System.out.println("OK");
+        } else {
+            System.out.println("NO");
+        }
     }
 }

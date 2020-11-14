@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
@@ -28,5 +25,8 @@
                 <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
             </columnResizePolicy>
         </TableView>
+        <Button fx:id="buttonDownload" layoutX="675.0" layoutY="100.0" mnemonicParsing="false"  prefHeight="37.0" prefWidth="77.0" text="Upload"/>
+        <Button fx:id="buttonRefresh" layoutX="675.0" layoutY="157.0" mnemonicParsing="false"  prefHeight="37.0" prefWidth="77.0" text="Refresh"/>
+        <Button fx:id="buttonLogout" layoutX="675.0" layoutY="214.0" mnemonicParsing="false" onAction="#logout" prefHeight="37.0" prefWidth="77.0" text="Logout"/>
     </children>
 </AnchorPane>
