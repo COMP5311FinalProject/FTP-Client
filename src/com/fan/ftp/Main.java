@@ -37,6 +37,7 @@ public class Main extends Application {
         controller.setMain(this);
         window.setTitle("FTP Client-Please login");
         window.setScene(new Scene(root,400,400));
+        window.centerOnScreen();
         window.show();
     }
 
@@ -48,7 +49,8 @@ public class Main extends Application {
         controller.setMain(this);
         controller.init(files);
         window.setTitle("FTP Client");
-        window.setScene(new Scene(root,800,700));
+        window.setScene(new Scene(root,750,500));
+        window.centerOnScreen();
         window.show();
     }
 

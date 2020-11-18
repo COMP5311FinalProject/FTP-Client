@@ -11,6 +11,8 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -27,12 +29,11 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-public class ClientController {
+public class ClientController implements Initializable{
     private Main main;
     public static ObservableList<FileModel> fileModels = FXCollections.observableArrayList();
     @FXML
     private TableView<FileModel> table;
-
     @FXML
     private  TableColumn<FileModel, String> name;
     @FXML
@@ -41,7 +42,8 @@ public class ClientController {
     private  TableColumn<FileModel, String> date;
     @FXML
     private TableColumn<FileModel, Void> action;
-
+    @FXML
+    private ImageView imageView;
     public void init(FileModel[] files) {
         for (FileModel file: files){
             fileModels.add(file);
@@ -54,12 +56,14 @@ public class ClientController {
 
         table.setItems(fileModels);
         // set default sort policy according to the modified time
-        table.sortPolicyProperty().set(t -> {
-            Comparator<FileModel> comparator = (r1, r2)
-                    -> r2.getDate().compareTo(r1.getDate()); //columns are sorted: sort accordingly
-            FXCollections.sort(table.getItems(), comparator);
-            return true;
-        });
+//        table.sortPolicyProperty().set(t -> {
+//            Comparator<FileModel> comparator = (r1, r2)
+//                    -> r2.getDate().compareTo(r1.getDate());
+//            FXCollections.sort(table.getItems(), comparator);
+//            return true;
+//        });
+        date.setSortType(TableColumn.SortType.DESCENDING);
+        table.getSortOrder().addAll(date);
         // rewrite size column sort policy,convert KB, MB to B and then sort
         size.setComparator(new Comparator<String>() {
             @Override
@@ -178,9 +182,20 @@ public class ClientController {
         try {
             FileModel[] files = main.getFtp().getAllFile();
             fileModels.clear();
-            init(files);
+            for (FileModel file: files){
+                fileModels.add(file);
+            }
+            table.setItems(fileModels);
+            table.getSortOrder().clear();
+            table.getSortOrder().addAll(date);
+            table.scrollTo(0);
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        imageView.setImage(new Image(Main.class.getResourceAsStream("ftp.png")));
     }
 }

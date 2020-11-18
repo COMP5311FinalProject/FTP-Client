@@ -14,6 +14,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -46,7 +47,17 @@ public class LoginController implements Initializable {
         this.loginData[1] = this.portText.getText();
         this.loginData[2] = this.userNameText.getText();
         this.loginData[3] = this.passwordText.getText();
-        Ftp_by_me_active ftp = new Ftp_by_me_active(loginData[0],loginData[2],loginData[3]);
+        Ftp_by_me_active ftp;
+        try {
+            ftp = new Ftp_by_me_active(loginData[0],loginData[2],loginData[3]);
+        } catch (ConnectException e){
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("FTP Client");
+            alert.setHeaderText("There is something wrong with the server");
+            alert.initOwner(main.getWindow());
+            alert.showAndWait();
+            return;
+        }
         int code = 0;
         try {
             code = ftp.initftp();

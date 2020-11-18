@@ -23,24 +23,17 @@ public class Ftp_by_me_active {
 
     private static final int PORT = 21;
 
-    public static boolean isLogined=false  ;
+    public static boolean isLogined=false ;
+
     Socket socket;
 
-    public Ftp_by_me_active(String url, String username, String password) {
-        try {
+    public Ftp_by_me_active(String url, String username, String password) throws IOException {
             socket = new Socket(url, PORT);//建立与服务器的socket连接
-
             setUsername(username);
             setPassword(password);
 
             controlReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             controlOut = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
-
-//            initftp();  //登录到ftp服务器
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
     }
 
 
@@ -55,7 +48,7 @@ public class Ftp_by_me_active {
 
         String response = controlReader.readLine();
         System.out.println(response);
-
+        // username is not existed
         if (!response.startsWith("331 ")) {
             return 1;
         }
@@ -64,6 +57,7 @@ public class Ftp_by_me_active {
 
         response = controlReader.readLine();
         System.out.println(response);
+        // password is wrong
         if (!response.startsWith("230 ")) {
             return 2;
         }
