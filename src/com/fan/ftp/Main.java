@@ -9,6 +9,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import jfxtras.styles.jmetro.JMetro;
+import jfxtras.styles.jmetro.Style;
 
 import java.io.IOException;
 
@@ -40,6 +42,8 @@ public class Main extends Application {
         window.setOnCloseRequest(null);
         window.setTitle("FTP Client-Please login");
         window.setScene(new Scene(root,400,400));
+        JMetro jMetro = new JMetro(Style.LIGHT);
+        jMetro.setScene(window.getScene());
         window.centerOnScreen();
         window.show();
     }
@@ -63,7 +67,10 @@ public class Main extends Application {
             }
         });
         window.setTitle("FTP Client");
-        window.setScene(new Scene(root,750,500));
+        Scene scene = new Scene(root,750,500);
+        JMetro jMetro = new JMetro(Style.LIGHT);
+        jMetro.setScene(scene);
+        window.setScene(scene);
         window.centerOnScreen();
         window.show();
     }

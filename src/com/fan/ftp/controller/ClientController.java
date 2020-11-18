@@ -3,6 +3,7 @@ package com.fan.ftp.controller;
 import com.fan.ftp.Main;
 import com.fan.ftp.model.FileModel;
 import com.fan.ftp.utils.MyUtil;
+import impl.jfxtras.styles.jmetro.ToggleSwitchSkin;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -16,6 +17,7 @@ import javafx.scene.image.ImageView;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.util.Callback;
+import org.controlsfx.control.ToggleSwitch;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,6 +41,9 @@ public class ClientController implements Initializable{
     private TableColumn<FileModel, Void> action;
     @FXML
     private ImageView imageView;
+    @FXML
+    private ToggleSwitch isPasv;
+
     public void init(FileModel[] files) {
         for (FileModel file: files){
             fileModels.add(file);
@@ -121,16 +126,18 @@ public class ClientController implements Initializable{
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Resource File");
         File file = fileChooser.showOpenDialog(main.getWindow());
-        try {
-            main.getFtp().upload(file.getPath());
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("FTP Client");
-            alert.setHeaderText("Upload Successfully!");
-            alert.initOwner(main.getWindow());
-            alert.showAndWait();
-            refresh();
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (file != null){
+            try {
+                main.getFtp().upload(file.getPath());
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("FTP Client");
+                alert.setHeaderText("Upload Successfully!");
+                alert.initOwner(main.getWindow());
+                alert.showAndWait();
+                refresh();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -173,5 +180,9 @@ public class ClientController implements Initializable{
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         imageView.setImage(new Image(Main.class.getResourceAsStream("ftp.png")));
+        isPasv.selectedProperty().addListener(((observable, oldValue, newValue) -> {
+            System.out.println(isPasv.getText() + " changed from " + oldValue + " to " + newValue);
+            System.out.println("Taking a nap!");
+        }));
     }
 }

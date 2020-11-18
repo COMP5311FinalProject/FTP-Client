@@ -5,6 +5,7 @@
 
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.image.ImageView?>
+<?import org.controlsfx.control.ToggleSwitch?>
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.fan.ftp.controller.ClientController"
@@ -30,5 +31,8 @@
         <Button fx:id="buttonUpload" layoutX="650.0" layoutY="97.0" mnemonicParsing="false" onAction="#upload"  prefHeight="37.0" prefWidth="77.0" text="Upload"/>
         <Button fx:id="buttonRefresh" layoutX="650.0" layoutY="154.0" mnemonicParsing="false" onAction="#refresh" prefHeight="37.0" prefWidth="77.0" text="Refresh"/>
         <Button fx:id="buttonLogout" layoutX="650.0" layoutY="211.0" mnemonicParsing="false" onAction="#logout" prefHeight="37.0" prefWidth="77.0" text="Logout"/>
+        <Label layoutX="650.0" layoutY="260.0" prefHeight="17.0" text="Passive Mode" textFill="#250e0e">
+        </Label>
+        <ToggleSwitch fx:id="isPasv" layoutX="665.0" layoutY="280.0" selected="false"/>
     </children>
 </AnchorPane>

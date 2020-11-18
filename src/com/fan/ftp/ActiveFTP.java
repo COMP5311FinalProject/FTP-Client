@@ -76,7 +76,6 @@ public class ActiveFTP {
         response = fromServer.readLine();
         System.out.println(response);
 
-
         // Read data from server
         Vector<FileModel> tempfiles = new Vector<>();
 
@@ -97,7 +96,6 @@ public class ActiveFTP {
         tempfiles.copyInto(files);
 
         return files;
-
     }
 
     //resolve a FileModel object by the string
@@ -144,7 +142,6 @@ public class ActiveFTP {
         int dataPort = sendPortCommand();
         String response;
 
-
         //Send command STOR
         toServer.println("STOR " + f.getName());
 
@@ -160,7 +157,6 @@ public class ActiveFTP {
         BufferedOutputStream output = new BufferedOutputStream(dataSocket.getOutputStream());
         readDataFromServer(input,output);
         dataSocket.close();
-
 
         response = fromServer.readLine();
         System.out.println(response);
@@ -179,7 +175,6 @@ public class ActiveFTP {
         // Open data connection
         ServerSocket dataSocketServ = new ServerSocket(dataPort);
         Socket dataSocket=dataSocketServ.accept();
-
 
         // read data from server
         BufferedOutputStream output = new BufferedOutputStream(
@@ -209,7 +204,6 @@ public class ActiveFTP {
         int dataPort=(int)(Math.random()*100000%9999)+1024;
         String portCommand="MYPORT "+ url+","+dataPort;
         toServer.println(portCommand);
-
         String response;
         response= fromServer.readLine();
         System.out.println(response);
