@@ -7,7 +7,6 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
@@ -16,7 +15,7 @@ import java.io.IOException;
 public class Main extends Application {
     private FileModel[] files;
     private Stage window;
-    private Ftp_by_me_active ftp;
+    private ActiveFTP ftp;
 
     public static void main(String[] args) {
         launch(args);
@@ -27,20 +26,27 @@ public class Main extends Application {
         window = primaryStage;
         showLoginView();
         primaryStage.getIcons().add(new Image(Main.class.getResourceAsStream("icon.png")));
-//        showClientView(files);
     }
+
+    /**
+     * show login window
+     */
     public void showLoginView() throws IOException {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("views/login.fxml"));
         Parent root = loader.load();
         LoginController controller = loader.getController();
         controller.setMain(this);
+        window.setOnCloseRequest(null);
         window.setTitle("FTP Client-Please login");
         window.setScene(new Scene(root,400,400));
         window.centerOnScreen();
         window.show();
     }
 
+    /**
+     * show the client window
+     */
     public void showClientView(FileModel[] files) throws IOException {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("views/client.fxml"));
@@ -48,11 +54,20 @@ public class Main extends Application {
         ClientController controller = loader.getController();
         controller.setMain(this);
         controller.init(files);
+        // close the window directly,then tell the server I want to disconnect with you
+        window.setOnCloseRequest(e -> {
+            try {
+                ftp.logout();
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+        });
         window.setTitle("FTP Client");
         window.setScene(new Scene(root,750,500));
         window.centerOnScreen();
         window.show();
     }
+
 
     public FileModel[] getFiles() {
         return files;
@@ -70,11 +85,11 @@ public class Main extends Application {
         this.window = window;
     }
 
-    public Ftp_by_me_active getFtp() {
+    public ActiveFTP getFtp() {
         return ftp;
     }
 
-    public void setFtp(Ftp_by_me_active ftp) {
+    public void setFtp(ActiveFTP ftp) {
         this.ftp = ftp;
     }
 }

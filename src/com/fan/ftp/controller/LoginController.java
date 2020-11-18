@@ -1,6 +1,6 @@
 package com.fan.ftp.controller;
 
-import com.fan.ftp.Ftp_by_me_active;
+import com.fan.ftp.ActiveFTP;
 import com.fan.ftp.Main;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -47,9 +47,9 @@ public class LoginController implements Initializable {
         this.loginData[1] = this.portText.getText();
         this.loginData[2] = this.userNameText.getText();
         this.loginData[3] = this.passwordText.getText();
-        Ftp_by_me_active ftp;
+        ActiveFTP ftp;
         try {
-            ftp = new Ftp_by_me_active(loginData[0],loginData[2],loginData[3]);
+            ftp = new ActiveFTP(loginData[0],loginData[2],loginData[3],Integer.parseInt(loginData[1]));
         } catch (ConnectException e){
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("FTP Client");
@@ -60,10 +60,11 @@ public class LoginController implements Initializable {
         }
         int code = 0;
         try {
-            code = ftp.initftp();
+            code = ftp.initFtp();
         } catch (Exception e) {
             e.printStackTrace();
         }
+        // alert a window to tell user the user is not existed
         if (code == 1){
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("FTP Client");
@@ -72,6 +73,7 @@ public class LoginController implements Initializable {
             alert.showAndWait();
             return;
         }
+        // alert a window to tell user the password is wrong
         if (code == 2) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("FTP Client");
@@ -81,12 +83,12 @@ public class LoginController implements Initializable {
             return;
         }
         main.setFtp(ftp);
-        if (Ftp_by_me_active.isLogined){
+        // login successfully to get all files
+        if (ActiveFTP.isLogin){
             Platform.runLater(new Runnable() {
                 @Override public void run() {
                     //Update UI here
                     try {
-                        System.out.println(ftp.getAllFile().length);
                         main.setFiles(ftp.getAllFile());
                         main.showClientView(ftp.getAllFile());
                     } catch (Exception e) {

@@ -23,7 +23,7 @@
         <Label layoutX="65.0" layoutY="103.0" prefHeight="25.0" prefWidth="80.0"  text="Host Address" />
         <TextField fx:id="serverAddressText" layoutX="169.0" layoutY="103.0" promptText="FTP Server Address" text="127.0.0.1" />
         <Label layoutX="66.0" layoutY="148.0" prefHeight="25.0" prefWidth="75.0"  text="      Port" />
-        <TextField fx:id="portText" layoutX="169.0" layoutY="148.0" promptText="FTP Server Port" text="20000" />
+        <TextField fx:id="portText" layoutX="169.0" layoutY="148.0" promptText="FTP Server Port" text="21" />
         <Label alignment="CENTER" layoutX="65.0" layoutY="193.0" prefHeight="25.0" prefWidth="75.0" text="Username" />
         <TextField fx:id="userNameText" layoutX="169.0" layoutY="193.0" promptText="Enter Your Username" text="admin" />
         <Label alignment="CENTER" layoutX="65.0" layoutY="237.0" prefHeight="25.0" prefWidth="75.0" text="Password" />

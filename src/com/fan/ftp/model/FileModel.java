@@ -1,9 +1,5 @@
 package com.fan.ftp.model;
 
-import javafx.beans.property.SimpleLongProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-
 public class FileModel {
     private String name;
     private String size;

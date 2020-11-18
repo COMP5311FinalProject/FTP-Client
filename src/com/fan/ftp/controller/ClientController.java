@@ -2,7 +2,7 @@ package com.fan.ftp.controller;
 
 import com.fan.ftp.Main;
 import com.fan.ftp.model.FileModel;
-import javafx.beans.value.ObservableValue;
+import com.fan.ftp.utils.MyUtil;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -15,17 +15,12 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 import javafx.util.Callback;
-import org.apache.commons.net.ftp.FTPFile;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.security.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -48,6 +43,7 @@ public class ClientController implements Initializable{
         for (FileModel file: files){
             fileModels.add(file);
         }
+        // binding property
         name.setCellValueFactory(new PropertyValueFactory<FileModel,String>("name"));
         size.setCellValueFactory(new PropertyValueFactory<FileModel,String>("size"));
         date.setCellValueFactory(new PropertyValueFactory<FileModel,String>("date"));
@@ -56,34 +52,14 @@ public class ClientController implements Initializable{
 
         table.setItems(fileModels);
         // set default sort policy according to the modified time
-//        table.sortPolicyProperty().set(t -> {
-//            Comparator<FileModel> comparator = (r1, r2)
-//                    -> r2.getDate().compareTo(r1.getDate());
-//            FXCollections.sort(table.getItems(), comparator);
-//            return true;
-//        });
         date.setSortType(TableColumn.SortType.DESCENDING);
         table.getSortOrder().addAll(date);
-        // rewrite size column sort policy,convert KB, MB to B and then sort
+        // rewrite size column sort policy
         size.setComparator(new Comparator<String>() {
             @Override
             public int compare(String o1, String o2) {
-                    double a1 = Double.parseDouble(o1.substring(0,o1.length()-2));
-                    double a2 = Double.parseDouble(o2.substring(0,o2.length()-2));
-                    if (o1.contains("KB")){
-                        a1 = a1 * 1024;
-                    }
-                    if (o1.contains("MB")){
-                        a1 = a1 * 1024 * 1024;
-                    }
-                    if (o2.contains("KB")){
-                        a2 = a2 * 1024;
-                    }
-                    if (o2.contains("MB")){
-                        a2 = a2 * 1024 * 1024;
-                    }
-                    return (int)(a1 - a2);
-                }
+                return MyUtil.compareSize(o1,o2);
+            }
         });
     }
 
@@ -93,15 +69,15 @@ public class ClientController implements Initializable{
         this.main = main;
     }
 
+    /**
+     * add a download button to each row and set event for it
+     */
     private void addButtonToTable() {
-
         Callback<TableColumn<FileModel, Void>, TableCell<FileModel, Void>> cellFactory = new Callback<TableColumn<FileModel, Void>, TableCell<FileModel, Void>>() {
             @Override
             public TableCell<FileModel, Void> call(final TableColumn<FileModel, Void> param) {
                 final TableCell<FileModel, Void> cell = new TableCell<FileModel, Void>() {
-
                     private final Button btn = new Button("download");
-
                     {
                         btn.setOnAction((ActionEvent event) -> {
                             DirectoryChooser file=new DirectoryChooser();
