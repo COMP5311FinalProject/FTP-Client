@@ -8,26 +8,27 @@
 
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.shape.Arc?>
+<?import javafx.scene.image.ImageView?>
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.fan.ftp.controller.LoginController"
             prefHeight="600.0" prefWidth="400.0">
     <children>
-        <Label layoutX="140.0" layoutY="24.0" prefHeight="17.0" prefWidth="120.0" text="Ftp Client Server" textFill="#250e0e">
+        <ImageView fx:id="imageView" layoutX="135" layoutY="38" fitWidth="50" fitHeight="50"></ImageView>
+        <Label layoutX="190.0" layoutY="52.0" prefHeight="17.0" prefWidth="120.0" text="Ftp Client" textFill="#250e0e">
             <font>
-                <Font name="System Bold" size="12.0" />
+                <Font name="System Bold" size="18.0" />
             </font>
         </Label>
-        <Label layoutX="65.0" layoutY="63.0" prefHeight="25.0" prefWidth="75.0"  text="Host Address" />
-        <TextField fx:id="serverAddressText" layoutX="169.0" layoutY="63.0" promptText="Host Address" text="127.0.0.1" />
-        <Label layoutX="66.0" layoutY="108.0" prefHeight="25.0" prefWidth="75.0"  text="      Port" />
-        <TextField fx:id="portText" layoutX="169.0" layoutY="108.0" promptText="Port" text="20000" />
-        <Label alignment="CENTER" layoutX="65.0" layoutY="153.0" prefHeight="25.0" prefWidth="75.0" text="Username" />
-        <TextField fx:id="userNameText" layoutX="169.0" layoutY="153.0" promptText="Enter Your Unique Username" text="admin" />
-        <Label alignment="CENTER" layoutX="65.0" layoutY="197.0" prefHeight="25.0" prefWidth="75.0" text="Password" />
-        <PasswordField fx:id="passwordText" layoutX="169.0" layoutY="197.0" promptText="Password" text="000000" />
-<!--        <Arc fill="#031425" layoutX="131.0" layoutY="33.0" length="270.0" radiusX="8.0" radiusY="8.0" startAngle="45.0" stroke="BLACK" strokeType="INSIDE" type="ROUND" />-->
-        <Button fx:id="resetButton" layoutX="178.0" layoutY="243.0" mnemonicParsing="false" onAction="#resetButtonAction"  text="Reset" />
-        <Button fx:id="loginButton" layoutX="244.0" layoutY="243.0" mnemonicParsing="false" onAction="#loginButtonAction" text="Login" />
+        <Label layoutX="65.0" layoutY="103.0" prefHeight="25.0" prefWidth="80.0"  text="Host Address" />
+        <TextField fx:id="serverAddressText" layoutX="169.0" layoutY="103.0" promptText="FTP Server Address" text="127.0.0.1" />
+        <Label layoutX="66.0" layoutY="148.0" prefHeight="25.0" prefWidth="75.0"  text="      Port" />
+        <TextField fx:id="portText" layoutX="169.0" layoutY="148.0" promptText="FTP Server Port" text="20000" />
+        <Label alignment="CENTER" layoutX="65.0" layoutY="193.0" prefHeight="25.0" prefWidth="75.0" text="Username" />
+        <TextField fx:id="userNameText" layoutX="169.0" layoutY="193.0" promptText="Enter Your Username" text="admin" />
+        <Label alignment="CENTER" layoutX="65.0" layoutY="237.0" prefHeight="25.0" prefWidth="75.0" text="Password" />
+        <PasswordField fx:id="passwordText" layoutX="169.0" layoutY="237.0" promptText="Enter your Password" text="000000" />
+        <Button fx:id="resetButton" layoutX="178.0" layoutY="283.0" mnemonicParsing="false" onAction="#resetButtonAction"  text="Reset" />
+        <Button fx:id="loginButton" layoutX="244.0" layoutY="283.0" mnemonicParsing="false" onAction="#loginButtonAction" text="Login" />
     </children>
 </AnchorPane>

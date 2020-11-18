@@ -26,7 +26,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         window = primaryStage;
         showLoginView();
-        primaryStage.getIcons().add(new Image(Main.class.getResourceAsStream("ftp.png")));
+        primaryStage.getIcons().add(new Image(Main.class.getResourceAsStream("icon.png")));
 //        showClientView(files);
     }
     public void showLoginView() throws IOException {

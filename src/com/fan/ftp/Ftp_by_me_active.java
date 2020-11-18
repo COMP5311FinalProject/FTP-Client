@@ -24,11 +24,11 @@ public class Ftp_by_me_active {
     private static final int PORT = 21;
 
     public static boolean isLogined=false  ;
-
+    Socket socket;
 
     public Ftp_by_me_active(String url, String username, String password) {
         try {
-            Socket socket = new Socket(url, PORT);//建立与服务器的socket连接
+            socket = new Socket(url, PORT);//建立与服务器的socket连接
 
             setUsername(username);
             setPassword(password);
@@ -36,7 +36,7 @@ public class Ftp_by_me_active {
             controlReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             controlOut = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
 
-            initftp();  //登录到ftp服务器
+//            initftp();  //登录到ftp服务器
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -44,7 +44,7 @@ public class Ftp_by_me_active {
     }
 
 
-    public void initftp() throws Exception {
+    public int initftp() throws Exception {
         String msg;
         do {
             msg = controlReader.readLine();
@@ -57,9 +57,7 @@ public class Ftp_by_me_active {
         System.out.println(response);
 
         if (!response.startsWith("331 ")) {
-            JOptionPane.showConfirmDialog(null, response, "ERROR_MESSAGE",JOptionPane.ERROR_MESSAGE);
-            throw new IOException("SimpleFTP received an unknown response after sending the user: " + response);
-
+            return 1;
         }
 
         controlOut.println("PASS " + ftppassword);
@@ -67,11 +65,11 @@ public class Ftp_by_me_active {
         response = controlReader.readLine();
         System.out.println(response);
         if (!response.startsWith("230 ")) {
-            JOptionPane.showConfirmDialog(null, response, "ERROR_MESSAGE",JOptionPane.ERROR_MESSAGE);
-           throw new IOException("SimpleFTP was unable to log in with the supplied password: "+ response);
+            return 2;
         }
 
         isLogined=true;//登录成功标志
+        return 0;
     }
 
     private void setUsername(String username) {
@@ -243,6 +241,14 @@ public class Ftp_by_me_active {
 
         response = controlReader.readLine();
         System.out.println(response);
+    }
+
+    public void logout() throws IOException {
+        isLogined = false;
+        controlOut.println("QUIT");
+        String response = controlReader.readLine();
+        System.out.println(response);
+        socket.close();
     }
 
 }

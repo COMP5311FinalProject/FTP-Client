@@ -18,6 +18,7 @@ import javafx.util.Callback;
 import org.apache.commons.net.ftp.FTPFile;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.security.Timestamp;
 import java.text.SimpleDateFormat;
@@ -41,18 +42,6 @@ public class ClientController {
     @FXML
     private TableColumn<FileModel, Void> action;
 
-
-//    public void showAllFileInfo(FTPFile[] ftpFiles){
-//        System.out.println(ftpFiles.length);
-//        for (FTPFile file: ftpFiles){
-//            fileModels.add(new FileModel(file.getName(),file.getSize(),file.getTimestamp().getTime().toString()));
-//        }
-//        name.setCellValueFactory(new PropertyValueFactory<FileModel,String>("name"));
-//        size.setCellValueFactory(new PropertyValueFactory<FileModel,Long>("size"));
-//        date.setCellValueFactory(new PropertyValueFactory<FileModel,String>("date"));
-//        table.setItems(fileModels);
-//    }
-
     public void init(FileModel[] files) {
         for (FileModel file: files){
             fileModels.add(file);
@@ -64,7 +53,14 @@ public class ClientController {
         addButtonToTable();
 
         table.setItems(fileModels);
-        // rewrite size column sort policy
+        // set default sort policy according to the modified time
+        table.sortPolicyProperty().set(t -> {
+            Comparator<FileModel> comparator = (r1, r2)
+                    -> r2.getDate().compareTo(r1.getDate()); //columns are sorted: sort accordingly
+            FXCollections.sort(table.getItems(), comparator);
+            return true;
+        });
+        // rewrite size column sort policy,convert KB, MB to B and then sort
         size.setComparator(new Comparator<String>() {
             @Override
             public int compare(String o1, String o2) {
@@ -108,12 +104,11 @@ public class ClientController {
                             file.setTitle("Choose the local directory for FTP");
                             File newFolder = file.showDialog(main.getWindow());
                             FileModel data = getTableView().getItems().get(getIndex());
-                            System.out.println("selectedData: " + data.getName());
                             try {
                                 main.getFtp().download(data.getName(),newFolder.getPath());
                                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                                 alert.setTitle("FTP Client");
-                                alert.setHeaderText("Down Successfully!");
+                                alert.setHeaderText("Download Successfully!");
                                 alert.initOwner(main.getWindow());
                                 alert.showAndWait();
                             } catch (Exception e) {
@@ -139,7 +134,31 @@ public class ClientController {
         action.setCellFactory(cellFactory);
     }
 
-    public void logout() {
+    /**
+     * upload file function
+     */
+    public void upload() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open Resource File");
+        File file = fileChooser.showOpenDialog(main.getWindow());
+        try {
+            main.getFtp().upload(file.getPath());
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("FTP Client");
+            alert.setHeaderText("Upload Successfully!");
+            alert.initOwner(main.getWindow());
+            alert.showAndWait();
+            refresh();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    /**
+     * logout function
+     */
+    public void logout() throws IOException {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirmation Dialog");
         alert.setHeaderText("Are you sure to logout");
@@ -147,9 +166,21 @@ public class ClientController {
         alert.initOwner(main.getWindow());
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK){
-            System.out.println("OK");
-        } else {
-            System.out.println("NO");
+            main.showLoginView();
+            main.getFtp().logout();
+            fileModels.clear();
+        }
+    }
+    /**
+     * refresh function
+     */
+    public void refresh(){
+        try {
+            FileModel[] files = main.getFtp().getAllFile();
+            fileModels.clear();
+            init(files);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
