@@ -6,26 +6,30 @@ import com.fan.ftp.utils.MyUtil;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.StringTokenizer;
 import java.util.Vector;
 
-public class ActiveFTP {
+public class MyFTP {
 
     private BufferedReader fromServer;
     private PrintWriter toServer;
     private String ftpUsername;
     private String ftpPassword;
-    public static boolean isLogin =false ;
+    public static boolean isLogin = false;
+    private String passHost="127.0.0.1";
+    private int passPort=21;
+    private boolean isPasvMode = false;
 
     Socket socket;
 
-    public ActiveFTP(String url, String username, String password, int port) throws IOException {
-            //connect to the server
-            socket = new Socket(url, port);
-            setUsername(username);
-            setPassword(password);
+    public MyFTP(String url, String username, String password, int port) throws IOException {
+        //connect to the server
+        socket = new Socket(url, port);
+        setUsername(username);
+        setPassword(password);
 
-            fromServer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            toServer = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
+        fromServer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        toServer = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
     }
 
 
@@ -138,16 +142,23 @@ public class ActiveFTP {
         FileInputStream is = new FileInputStream(f);
         BufferedInputStream input = new BufferedInputStream(is);
 
-        //Send PORT command
-        int dataPort = sendPortCommand();
         String response;
+        Socket dataSocket = null;
 
-        //Send command STOR
-        toServer.println("STOR " + f.getName());
+        if (isPasvMode) {
+            checkIsPassiveMode();
+            dataSocket = new Socket(passHost,passPort);
+        } else {
+            //主动模式:Send PORT command
+            int dataPort = sendPortCommand();
 
-        // pen data connection
-        ServerSocket dataSocketServ = new ServerSocket(dataPort);
-        Socket dataSocket=dataSocketServ.accept();
+            //Send command STOR
+            toServer.println("STOR " + f.getName());
+
+            // pen data connection
+            ServerSocket dataSocketServ = new ServerSocket(dataPort);
+            dataSocket=dataSocketServ.accept();
+        }
 
         //Read command response
         response = fromServer.readLine();
@@ -165,17 +176,20 @@ public class ActiveFTP {
 
     //download file from server to the local path
     public void download(String from_file_name, String to_path) throws Exception {
-        // send PORT command
-        int dataPort = sendPortCommand();
         String response;
-
+        Socket dataSocket = null;
+        if (isPasvMode){
+            checkIsPassiveMode();
+            dataSocket = new Socket(passHost,passPort);
+        } else {
+            // 主动模式: send PORT command
+            int dataPort = sendPortCommand();
+            // Open data connection
+            ServerSocket dataSocketServ = new ServerSocket(dataPort);
+            dataSocket=dataSocketServ.accept();
+        }
         // send RETR command
         toServer.println("RETR " + from_file_name);
-
-        // Open data connection
-        ServerSocket dataSocketServ = new ServerSocket(dataPort);
-        Socket dataSocket=dataSocketServ.accept();
-
         // read data from server
         BufferedOutputStream output = new BufferedOutputStream(
                 new FileOutputStream(new File(to_path, from_file_name)));
@@ -225,4 +239,39 @@ public class ActiveFTP {
         input.close();
     }
 
+    //将服务器设置为passive模式
+    private void checkIsPassiveMode() throws Exception {
+        String response;
+        toServer.println("PASV mode");
+        response = fromServer.readLine();
+        System.out.println(response);
+        if (!response.startsWith("2271 ")) {
+            throw new IOException("FTPClient could not request passive mode: " + response);
+        }
+
+        int opening = response.indexOf('(');
+        int closing = response.indexOf(')', opening + 1);
+        if (closing > 0) {
+            String dataLink = response.substring(opening + 1, closing);
+            StringTokenizer tokenizer = new StringTokenizer(dataLink, ",");
+            try {
+                passHost = tokenizer.nextToken() + "." + tokenizer.nextToken() + "."
+                        + tokenizer.nextToken() + "." + tokenizer.nextToken();
+                passPort = Integer.parseInt(tokenizer.nextToken()) * 256
+                        + Integer.parseInt(tokenizer.nextToken());
+            } catch (Exception e) {
+                throw new IOException(
+                        "FTPClient received bad data link information: "
+                                + response);
+            }
+        }
+    }
+
+    public boolean isPasvMode() {
+        return isPasvMode;
+    }
+
+    public void setPasvMode(boolean pasvMode) {
+        isPasvMode = pasvMode;
+    }
 }

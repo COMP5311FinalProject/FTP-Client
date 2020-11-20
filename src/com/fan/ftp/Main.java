@@ -17,7 +17,7 @@ import java.io.IOException;
 public class Main extends Application {
     private FileModel[] files;
     private Stage window;
-    private ActiveFTP ftp;
+    private MyFTP ftp;
 
     public static void main(String[] args) {
         launch(args);
@@ -92,11 +92,11 @@ public class Main extends Application {
         this.window = window;
     }
 
-    public ActiveFTP getFtp() {
+    public MyFTP getFtp() {
         return ftp;
     }
 
-    public void setFtp(ActiveFTP ftp) {
+    public void setFtp(MyFTP ftp) {
         this.ftp = ftp;
     }
 }

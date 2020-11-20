@@ -1,6 +1,6 @@
 package com.fan.ftp.controller;
 
-import com.fan.ftp.ActiveFTP;
+import com.fan.ftp.MyFTP;
 import com.fan.ftp.Main;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -47,9 +47,9 @@ public class LoginController implements Initializable {
         this.loginData[1] = this.portText.getText();
         this.loginData[2] = this.userNameText.getText();
         this.loginData[3] = this.passwordText.getText();
-        ActiveFTP ftp;
+        MyFTP ftp;
         try {
-            ftp = new ActiveFTP(loginData[0],loginData[2],loginData[3],Integer.parseInt(loginData[1]));
+            ftp = new MyFTP(loginData[0],loginData[2],loginData[3],Integer.parseInt(loginData[1]));
         } catch (ConnectException e){
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("FTP Client");
@@ -84,7 +84,7 @@ public class LoginController implements Initializable {
         }
         main.setFtp(ftp);
         // login successfully to get all files
-        if (ActiveFTP.isLogin){
+        if (MyFTP.isLogin){
             Platform.runLater(new Runnable() {
                 @Override public void run() {
                     //Update UI here

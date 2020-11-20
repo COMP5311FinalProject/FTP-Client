@@ -42,7 +42,9 @@ public class ClientController implements Initializable{
     @FXML
     private ImageView imageView;
     @FXML
-    private ToggleSwitch isPasv;
+    private ToggleSwitch pasvSwitch;
+
+    private boolean isPassive = false;
 
     public void init(FileModel[] files) {
         for (FileModel file: files){
@@ -90,6 +92,9 @@ public class ClientController implements Initializable{
                             File newFolder = file.showDialog(main.getWindow());
                             FileModel data = getTableView().getItems().get(getIndex());
                             try {
+                                if (isPassive) {
+                                    main.getFtp().setPasvMode(true);
+                                }
                                 main.getFtp().download(data.getName(),newFolder.getPath());
                                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                                 alert.setTitle("FTP Client");
@@ -163,6 +168,9 @@ public class ClientController implements Initializable{
      */
     public void refresh(){
         try {
+            if (isPassive) {
+                main.getFtp().setPasvMode(true);
+            }
             FileModel[] files = main.getFtp().getAllFile();
             fileModels.clear();
             for (FileModel file: files){
@@ -180,9 +188,8 @@ public class ClientController implements Initializable{
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         imageView.setImage(new Image(Main.class.getResourceAsStream("ftp.png")));
-        isPasv.selectedProperty().addListener(((observable, oldValue, newValue) -> {
-            System.out.println(isPasv.getText() + " changed from " + oldValue + " to " + newValue);
-            System.out.println("Taking a nap!");
+        pasvSwitch.selectedProperty().addListener(((observable, oldValue, newValue) -> {
+            isPassive = newValue;
         }));
     }
 }

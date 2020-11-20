@@ -33,6 +33,6 @@
         <Button fx:id="buttonLogout" layoutX="650.0" layoutY="211.0" mnemonicParsing="false" onAction="#logout" prefHeight="37.0" prefWidth="77.0" text="Logout"/>
         <Label layoutX="650.0" layoutY="260.0" prefHeight="17.0" text="Passive Mode" textFill="#250e0e">
         </Label>
-        <ToggleSwitch fx:id="isPasv" layoutX="665.0" layoutY="280.0" selected="false"/>
+        <ToggleSwitch fx:id="pasvSwitch" layoutX="665.0" layoutY="280.0" selected="false"/>
     </children>
 </AnchorPane>
