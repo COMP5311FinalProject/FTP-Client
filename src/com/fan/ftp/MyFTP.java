@@ -147,16 +147,16 @@ public class MyFTP {
 
         if (isPasvMode) {
             checkIsPassiveMode();
+            //Send command STOR
+            toServer.println("STOR " + f.getName());
             dataSocket = new Socket(passHost,passPort);
         } else {
             //主动模式:Send PORT command
             int dataPort = sendPortCommand();
-
+            // Open data connection
+            ServerSocket dataSocketServ = new ServerSocket(dataPort);
             //Send command STOR
             toServer.println("STOR " + f.getName());
-
-            // pen data connection
-            ServerSocket dataSocketServ = new ServerSocket(dataPort);
             dataSocket=dataSocketServ.accept();
         }
 
@@ -180,16 +180,18 @@ public class MyFTP {
         Socket dataSocket = null;
         if (isPasvMode){
             checkIsPassiveMode();
+            toServer.println("RETR " + from_file_name);
             dataSocket = new Socket(passHost,passPort);
         } else {
             // 主动模式: send PORT command
             int dataPort = sendPortCommand();
             // Open data connection
             ServerSocket dataSocketServ = new ServerSocket(dataPort);
+            toServer.println("RETR " + from_file_name);
             dataSocket=dataSocketServ.accept();
         }
         // send RETR command
-        toServer.println("RETR " + from_file_name);
+        //toServer.println("RETR " + from_file_name);
         // read data from server
         BufferedOutputStream output = new BufferedOutputStream(
                 new FileOutputStream(new File(to_path, from_file_name)));
@@ -242,7 +244,7 @@ public class MyFTP {
     //将服务器设置为passive模式
     private void checkIsPassiveMode() throws Exception {
         String response;
-        toServer.println("PASV mode");
+        toServer.println("PASV");
         response = fromServer.readLine();
         System.out.println(response);
         if (!response.startsWith("2271 ")) {
