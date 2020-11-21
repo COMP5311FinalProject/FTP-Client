@@ -146,6 +146,7 @@ public class MyFTP {
         Socket dataSocket = null;
 
         if (isPasvMode) {
+            //passive mode
             checkIsPassiveMode();
             //Send command STOR
             toServer.println("STOR " + f.getName());
