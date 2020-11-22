@@ -4,6 +4,7 @@ import com.fan.ftp.Main;
 import com.fan.ftp.model.FileModel;
 import com.fan.ftp.utils.MyUtil;
 import impl.jfxtras.styles.jmetro.ToggleSwitchSkin;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -90,6 +91,9 @@ public class ClientController implements Initializable{
                             DirectoryChooser file=new DirectoryChooser();
                             file.setTitle("Choose the local directory for FTP");
                             File newFolder = file.showDialog(main.getWindow());
+                            if (newFolder == null) {
+                                return; // close the chooser directly
+                            }
                             FileModel data = getTableView().getItems().get(getIndex());
                             try {
                                 if (isPassive) {
@@ -158,9 +162,18 @@ public class ClientController implements Initializable{
         alert.initOwner(main.getWindow());
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK){
-            main.showLoginView();
-            main.getFtp().logout();
-            fileModels.clear();
+            Platform.runLater(new Runnable() {
+                @Override public void run() {
+                    //Update UI here
+                    try {
+                        main.getFtp().logout();
+                        fileModels.clear();
+                        main.showLoginView();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
         }
     }
     /**

@@ -41,9 +41,10 @@ public class Main extends Application {
         controller.setMain(this);
         window.setOnCloseRequest(null);
         window.setTitle("FTP Client-Please login");
-        window.setScene(new Scene(root,400,400));
+        Scene scene = new Scene(root,400,400);
         JMetro jMetro = new JMetro(Style.LIGHT);
-        jMetro.setScene(window.getScene());
+        jMetro.setScene(scene);
+        window.setScene(scene);
         window.centerOnScreen();
         window.show();
     }

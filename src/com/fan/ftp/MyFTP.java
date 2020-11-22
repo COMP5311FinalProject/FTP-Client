@@ -242,7 +242,7 @@ public class MyFTP {
         input.close();
     }
 
-    //将服务器设置为passive模式
+    //tell server I want to use passive mode
     private void checkIsPassiveMode() throws Exception {
         String response;
         toServer.println("PASV");
@@ -262,6 +262,8 @@ public class MyFTP {
                         + tokenizer.nextToken() + "." + tokenizer.nextToken();
                 passPort = Integer.parseInt(tokenizer.nextToken()) * 256
                         + Integer.parseInt(tokenizer.nextToken());
+                System.out.println(passHost);
+                System.out.println(passPort);
             } catch (Exception e) {
                 throw new IOException(
                         "FTPClient received bad data link information: "
