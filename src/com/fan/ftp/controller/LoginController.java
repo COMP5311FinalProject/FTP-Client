@@ -51,6 +51,7 @@ public class LoginController implements Initializable {
         try {
             ftp = new MyFTP(loginData[0],loginData[2],loginData[3],Integer.parseInt(loginData[1]));
         } catch (ConnectException e){
+            // server not start or server has some problems
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("FTP Client");
             alert.setHeaderText("There is something wrong with the server");
