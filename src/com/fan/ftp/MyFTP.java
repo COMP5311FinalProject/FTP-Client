@@ -2,6 +2,7 @@ package com.fan.ftp;
 
 import com.fan.ftp.model.FileModel;
 import com.fan.ftp.utils.MyUtil;
+import javafx.concurrent.Task;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -176,36 +177,56 @@ public class MyFTP {
     }
 
     //download file from server to the local path
-    public void download(String from_file_name, String to_path) throws Exception {
-        String response;
-        Socket dataSocket = null;
-        if (isPasvMode){
-            checkIsPassiveMode();
-            toServer.println("RETR " + from_file_name);
-            dataSocket = new Socket(passHost,passPort);
-        } else {
-            // 主动模式: send PORT command
-            int dataPort = sendPortCommand();
-            // Open data connection
-            ServerSocket dataSocketServ = new ServerSocket(dataPort);
-            toServer.println("RETR " + from_file_name);
-            dataSocket=dataSocketServ.accept();
-        }
-        // send RETR command
-        //toServer.println("RETR " + from_file_name);
-        // read data from server
-        BufferedOutputStream output = new BufferedOutputStream(
-                new FileOutputStream(new File(to_path, from_file_name)));
-        BufferedInputStream input = new BufferedInputStream(
-                dataSocket.getInputStream());
-        readDataFromServer(input,output);
-        dataSocket.close();
+    public Task download(String from_file_name, String to_path, Long size) throws Exception {
+        return new Task() {
+            @Override
+            protected Object call() throws Exception {
+                String response;
+                Socket dataSocket = null;
+                if (isPasvMode){
+                    checkIsPassiveMode();
+                    toServer.println("RETR " + from_file_name);
+                    dataSocket = new Socket(passHost,passPort);
+                } else {
+                    // 主动模式: send PORT command
+                    int dataPort = sendPortCommand();
+                    // Open data connection
+                    ServerSocket dataSocketServ = new ServerSocket(dataPort);
+                    toServer.println("RETR " + from_file_name);
+                    dataSocket=dataSocketServ.accept();
+                }
+                // read data from server
+                BufferedOutputStream output = new BufferedOutputStream(
+                        new FileOutputStream(new File(to_path, from_file_name)));
+                BufferedInputStream input = new BufferedInputStream(
+                        dataSocket.getInputStream());
 
-        response = fromServer.readLine();
-        System.out.println(response);
+                byte[] buffer = new byte[4096];
+                int bytesRead = 0;
+                long currentRead = 0l;
+                while ((bytesRead = input.read(buffer)) != -1) {
+                    output.write(buffer, 0, bytesRead);
+                    currentRead += bytesRead;
+                    // update progress bar
+                    updateProgress(currentRead,size);
+                }
 
-        response = fromServer.readLine();
-        System.out.println(response);
+                output.flush();
+                updateMessage("finish");
+                output.close();
+                input.close();
+
+
+                dataSocket.close();
+
+                response = fromServer.readLine();
+                System.out.println(response);
+
+                response = fromServer.readLine();
+                System.out.println(response);
+                return true;
+            }
+        };
     }
 
     public void logout() throws IOException {

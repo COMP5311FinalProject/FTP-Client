@@ -13,6 +13,22 @@ public class MyUtil {
             return String.format("%.2f", (double)size / (1024 * 1024)) + "MB";
         }
     }
+    /**
+     * convert size to long
+     */
+    public static long formatSizeToLong(String str) {
+        Double size = Double.parseDouble(str.substring(0,str.length()-2));
+        if (str.contains("KB")){
+            size = size * 1024;
+        }
+        if (str.contains("MB")){
+            size = size * 1024 * 1024;
+        }
+        if (str.contains("KB")){
+            size = size * 1024;
+        }
+        return size.longValue();
+    }
 
     /**
      * convert KB, MB to B and then compare them

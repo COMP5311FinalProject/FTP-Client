@@ -34,5 +34,7 @@
         <Label layoutX="650.0" layoutY="260.0" prefHeight="17.0" text="Passive Mode" textFill="#250e0e">
         </Label>
         <ToggleSwitch fx:id="pasvSwitch" layoutX="665.0" layoutY="280.0" selected="false"/>
+        <Label fx:id="tip" text="1 file is downloading: " layoutX="170" layoutY="462"/>
+        <ProgressBar fx:id="progressBar" layoutX="300" layoutY="470"/>
     </children>
 </AnchorPane>
