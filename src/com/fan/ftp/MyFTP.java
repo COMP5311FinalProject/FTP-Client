@@ -203,12 +203,17 @@ public class MyFTP {
 
                 byte[] buffer = new byte[4096];
                 int bytesRead = 0;
-                long currentRead = 0l;
+                long currentRead = 0L;
                 while ((bytesRead = input.read(buffer)) != -1) {
                     output.write(buffer, 0, bytesRead);
                     currentRead += bytesRead;
                     // update progress bar
                     updateProgress(currentRead,size);
+                    try {
+                        Thread.sleep(10);
+                    } catch (Exception e){
+                        e.printStackTrace();
+                    }
                 }
 
                 output.flush();

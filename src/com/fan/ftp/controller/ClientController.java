@@ -111,6 +111,9 @@ public class ClientController implements Initializable {
                                 tip.setVisible(true);
                                 progressBar.setVisible(true);
                                 progressBar.progressProperty().unbind();
+                                if (isPassive){
+                                    main.getFtp().setPasvMode(true);
+                                }
                                 copyWorker = main.getFtp().download(data.getName(), newFolder.getPath(), MyUtil.formatSizeToLong(data.getSize()));
                                 progressBar.progressProperty().bind(copyWorker.progressProperty());
                             } catch (Exception e) {
@@ -120,8 +123,9 @@ public class ClientController implements Initializable {
                             copyWorker.messageProperty().addListener(new ChangeListener<String>() {
                                 public void changed(ObservableValue<? extends String> observable, String oldValue,
                                                     String newValue) {
+                                    System.out.println(newValue);
                                     // download is finished, hide the tip and progress bar
-                                    if (newValue == "finish") {
+                                    if (newValue.equals("finish")) {
                                         tip.setVisible(false);
                                         progressBar.setVisible(false);
                                         Alert alert = new Alert(Alert.AlertType.INFORMATION);
